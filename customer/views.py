@@ -11,7 +11,8 @@ def customer_list(request, id=None):
 
   context = {
     'customers': customers,
-    'selected_customer': selected_customer
+    'selected_customer': selected_customer,
+    'project_name' : "",
   }
   return render(request, 'customer.html', context)
 
