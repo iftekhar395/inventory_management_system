@@ -3,9 +3,39 @@
 <html>
 <head>
     {% with project_name="Inventory Management System" %}
-    <title>{{project_name}}</title>
+        <title>{{project_name}}</title>
     {% endwith %}
     <link rel="stylesheet" href="{% static 'customer.css' %}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .delete-button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: #dc3545;
+        }
+
+        .delete-button:hover {
+            color: #c82333;
+        }
+
+        .export-button {
+            background: none;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 1em;
+            color: #007bff;
+        }
+
+        .export-button:hover {
+            color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     {% include "common_ref.html" with set_home="Home" %}
@@ -13,7 +43,8 @@
     <div class="container">
         <h2>Customer Master</h2>
 
-        <div class="form-section">  <form id="customer-form" method="POST" action="/customer/save/" class="customer-form">
+        <div class="form-section">
+            <form id="customer-form" method="POST" action="/customer/save/" class="customer-form">
                 {% csrf_token %}
                 <input type="hidden" id="customer_id" name="customer_id" value="{{ selected_customer.customer_id }}">
 
@@ -39,7 +70,7 @@
 
                 <div class="form-group">
                     <label for="address">Address:</label>
-                    <textarea type="text" id="address" name="address" value="{{ selected_customer.address }}" required>{{ selected_customer.address }}</textarea>
+                    <textarea id="address" name="address" required>{{ selected_customer.address }}</textarea>
                 </div>
 
                 <div class="form-buttons">
@@ -48,11 +79,17 @@
                     <button type="button" onclick="location.reload();" class="refresh-button">Refresh</button>
                 </div>
             </form>
-        </div>  <div class="list-section">  <h3>Customer List</h3>
-            <table class="customer-table">
+        </div>
+
+        <div class="list-section">
+            <h3>Customer List</h3>
+            <button id="csv-export" class="export-button" title="Export to CSV"><i class="fas fa-file-csv"></i></button>
+
+            <table id="customer-table" class="customer-table display">
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Mobile</th>
                         <th>Email</th>
                         <th>Action</th>
                     </tr>
@@ -61,26 +98,86 @@
                     {% for customer in customers %}
                     <tr class="customer-row" data-id="{{ customer.customer_id }}">
                         <td><a href="{% url 'edit_customer_detail' id=customer.customer_id %}">{{ customer.first_name }} {{ customer.last_name }}</a></td>
+                        <td>{{ customer.mobile }}</td>
                         <td>{{ customer.email }}</td>
                         <td>
                             <a href="/customer/{{ customer.customer_id }}/delete/" onclick="return confirm('Are you sure you want to delete this customer?');">
-                                <button type="button" class="delete-button">Delete</button>
+                                <button type="button" class="delete-button">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3">No Data Exists</td>
+                        <td colspan="4">No Data Exists</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-        </div>  </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/jquery-3.7.0.min.js' %}"></script>
+    <script type="text/javascript" charset="utf8" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>-->
 
     <script>
-        document.getElementById("clear").addEventListener("click", function() {
-            document.querySelectorAll("#customer-form input, #customer-form textarea").forEach(input => input.value = "");
+$(document).ready(function () {
+    const table = $('#customer-table').DataTable();
+
+    $('#csv-export').on('click', function () {
+
+        const dataColumnIndices = table.columns().indexes().toArray().filter(index => {
+            return table.column(index).header().textContent !== "Action";
         });
+
+        const headerData = dataColumnIndices.map(index => {
+            const header = table.column(index).header();
+            return header instanceof $ ? header.text() : header.textContent;
+        });
+
+        let data = [];
+        table.rows({ search: 'applied' }).every(function (rowIdx, tableMeta, node) {
+            let rowData = [];
+            dataColumnIndices.forEach(colIndex => {
+                let value = this.cell(rowIdx, colIndex).data();
+
+                // Check if value is a string and contains HTML tags
+                if (typeof value === "string") {
+                    value = value.replace(/<[^>]*>/g, ""); // Remove all HTML tags
+                } else if (typeof value === 'object' && value !== null && value.text) { // Check if it's a jQuery object and has text
+                    value = value.text(); // Extract text from jQuery object
+                } else if (typeof value === 'object' && value !== null && value.textContent) { // Check if it's a DOM object and has textContent
+                    value = value.textContent; // Extract text from DOM object
+                }
+
+                rowData.push(value);
+            });
+            data.push(rowData);
+        });
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += headerData.join(",") + "\r\n";
+
+        data.forEach(row => {
+            csvContent += row.join(",") + "\r\n";
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "customer_data.csv");
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    });
+
+    document.getElementById("clear").addEventListener("click", function () {
+        document.querySelectorAll("#customer-form input, #customer-form textarea").forEach(input => input.value = "");
+    });
+});
     </script>
 </body>
 </html>

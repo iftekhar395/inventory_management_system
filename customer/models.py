@@ -11,6 +11,7 @@ class Customer(models.Model):
     address = models.CharField(max_length=500)
     date = models.DateField(default="2999-12-31")
 
+# Table Header visualisation
     def __str__(self):
         return f"{self.first_name} {self.last_name} {self.email} {self.mobile} {self.address} {self.date}"
 
