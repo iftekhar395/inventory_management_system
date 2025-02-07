@@ -6,9 +6,9 @@
         <title>{{project_name}}</title>
     {% endwith %}
     <link rel="stylesheet" href="{% static 'customer.css' %}">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/all.min.css' %}">
     <style>
         .delete-button {
             background: none;
@@ -70,7 +70,7 @@
 
                 <div class="form-group">
                     <label for="address">Address:</label>
-                    <textarea id="address" name="address" required>{{ selected_customer.address }}</textarea>
+                    <textarea id="address" type="text" name="address" required>{{ selected_customer.address }}</textarea>
                 </div>
 
                 <div class="form-buttons">
@@ -82,8 +82,11 @@
         </div>
 
         <div class="list-section">
-            <h3>Customer List</h3>
-            <button id="csv-export" class="export-button" title="Export to CSV"><i class="fas fa-file-csv"></i></button>
+            <div class="list-header">
+                <h3>Customer List</h3>
+                <button id="csv-export" class="export-button" title="Export to CSV"><i class="fas fa-file-csv"></i></button>
+
+            </div>
 
             <table id="customer-table" class="customer-table display">
                 <thead>
@@ -124,60 +127,60 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>-->
 
     <script>
-$(document).ready(function () {
-    const table = $('#customer-table').DataTable();
+        $(document).ready(function () {
+            const table = $('#customer-table').DataTable();
 
-    $('#csv-export').on('click', function () {
+            $('#csv-export').on('click', function () {
 
-        const dataColumnIndices = table.columns().indexes().toArray().filter(index => {
-            return table.column(index).header().textContent !== "Action";
-        });
+                const dataColumnIndices = table.columns().indexes().toArray().filter(index => {
+                    return table.column(index).header().textContent !== "Action";
+                });
 
-        const headerData = dataColumnIndices.map(index => {
-            const header = table.column(index).header();
-            return header instanceof $ ? header.text() : header.textContent;
-        });
+                const headerData = dataColumnIndices.map(index => {
+                    const header = table.column(index).header();
+                    return header instanceof $ ? header.text() : header.textContent;
+                });
 
-        let data = [];
-        table.rows({ search: 'applied' }).every(function (rowIdx, tableMeta, node) {
-            let rowData = [];
-            dataColumnIndices.forEach(colIndex => {
-                let value = this.cell(rowIdx, colIndex).data();
+                let data = [];
+                table.rows({ search: 'applied' }).every(function (rowIdx, tableMeta, node) {
+                    let rowData = [];
+                    dataColumnIndices.forEach(colIndex => {
+                        let value = this.cell(rowIdx, colIndex).data();
 
-                // Check if value is a string and contains HTML tags
-                if (typeof value === "string") {
-                    value = value.replace(/<[^>]*>/g, ""); // Remove all HTML tags
-                } else if (typeof value === 'object' && value !== null && value.text) { // Check if it's a jQuery object and has text
-                    value = value.text(); // Extract text from jQuery object
-                } else if (typeof value === 'object' && value !== null && value.textContent) { // Check if it's a DOM object and has textContent
-                    value = value.textContent; // Extract text from DOM object
-                }
+                        // Check if value is a string and contains HTML tags
+                        if (typeof value === "string") {
+                            value = value.replace(/<[^>]*>/g, ""); // Remove all HTML tags
+                        } else if (typeof value === 'object' && value !== null && value.text) { // Check if it's a jQuery object and has text
+                            value = value.text(); // Extract text from jQuery object
+                        } else if (typeof value === 'object' && value !== null && value.textContent) { // Check if it's a DOM object and has textContent
+                            value = value.textContent; // Extract text from DOM object
+                        }
 
-                rowData.push(value);
+                        rowData.push(value);
+                    });
+                    data.push(rowData);
+                });
+
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += headerData.join(",") + "\r\n";
+
+                data.forEach(row => {
+                    csvContent += row.join(",") + "\r\n";
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "customer_data.csv");
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
             });
-            data.push(rowData);
+
+            document.getElementById("clear").addEventListener("click", function () {
+                document.querySelectorAll("#customer-form input, #customer-form textarea").forEach(input => input.value = "");
+            });
         });
-
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += headerData.join(",") + "\r\n";
-
-        data.forEach(row => {
-            csvContent += row.join(",") + "\r\n";
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "customer_data.csv");
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-    });
-
-    document.getElementById("clear").addEventListener("click", function () {
-        document.querySelectorAll("#customer-form input, #customer-form textarea").forEach(input => input.value = "");
-    });
-});
     </script>
 </body>
 </html>

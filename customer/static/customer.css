@@ -7,6 +7,10 @@ body {
     padding: 0;
 }
 
+.list-header {
+    display: flex;
+}
+
 .container {
     width: 90%;
     max-width: 960px;

@@ -1,14 +1,193 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    {% include "common_ref.html" with set_home="Home" %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Management</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* Sidebar Styles */
+        #sidebar {
+            width: 200px;
+            background-color: #343a40;
+            height: 100vh;
+            transition: width 0.3s ease;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        #sidebar.collapsed {
+            width: 70px !important;
+        }
+
+        .brand-text {
+            font-size: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: opacity 0.3s ease;
+            color: white;
+        }
+
+        #sidebar.collapsed .brand-text {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #toggle-container {
+            position: absolute;
+            top: 15px;
+            left: 170px;
+            transition: left 0.3s ease;
+        }
+
+        #sidebar.collapsed #toggle-container {
+            left: 20px;
+        }
+
+        #toggle-btn {
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #toggle-btn i {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        #sidebar .nav-link i {
+            width: 20px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        #sidebar.collapsed .nav-link span {
+            display: none;
+        }
+
+        #sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #content {
+            margin-left: 200px;
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        #content.collapsed {
+            margin-left: 70px;
+        }
+
+        .submenu {
+            display: none;
+            padding-left: 20px;
+        }
+
+        .submenu .nav-link {
+            font-size: 14px;
+            padding: 8px 15px;
+        }
+
+        .submenu.active {
+            display: block;
+        }
+
+        #sidebar.collapsed .nav-link .menu-arrow {
+            display: none;
+        }
+
+        #sidebar.collapsed .submenu {
+            display: none !important;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Inventory Management System</h1>
-    <p>Welcome to my first Django project!</p>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="sidebar">
+                <div class="brand-text">Inventory</div>
+                <div id="toggle-container">
+                    <button id="toggle-btn"> <i class="fas fa-bars"></i> </button>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">
+                            <i class="fas fa-home"></i> <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link toggle-submenu">
+                            <i class="fas fa-users"></i> <span>Customers</span> <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="#" class="nav-link">Add Customer</a></li>
+                            <li><a href="#" class="nav-link">View Customers</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link toggle-submenu">
+                            <i class="fas fa-chart-bar"></i> <span>Reports</span> <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="#" class="nav-link">Sales Report</a></li>
+                            <li><a href="#" class="nav-link">Inventory Report</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-    <p><a href="customer/">Customer</a></p>
+            <div id="content">
+                <h1>Inventory Management System</h1>
+                <p>Welcome to my first Django project!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        const toggleButton = document.getElementById('toggle-btn');
+        const icon = toggleButton.querySelector('i');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        document.querySelectorAll('.toggle-submenu').forEach(item => {
+            item.addEventListener('click', function () {
+                this.nextElementSibling.classList.toggle('active');
+            });
+        });
+    </script>
+
 </body>
+
 </html>
