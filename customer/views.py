@@ -50,19 +50,3 @@ def delete_customer(request, id):
   customer.delete()
   return redirect('customer')
 
-# from django.shortcuts import render, get_object_or_404
-# from django.http import HttpResponse
-# from django.template import loader
-# from .models import Customer
-#
-# def customer(request,id=None):
-#   customer_data = Customer.objects.all().values()
-#   selected_customer = None
-#   if id:
-#     selected_customer = Customer.objects.get(customer_id=id)
-#   cus_template = loader.get_template('customer.html')
-#   context = {
-#     'customers' : customer_data,
-#     'selected_customer': selected_customer,
-#   }
-#   return HttpResponse(cus_template.render(context,request))

@@ -1,13 +1,14 @@
-{% load static %}
+{% extends "homepage.html" %}
+{% block child_block %}
 <!DOCTYPE html>
 <html>
 <head>
+    {% load static %}
     {% with project_name="Inventory Management System" %}
         <title>{{project_name}}</title>
     {% endwith %}
     <link rel="stylesheet" href="{% static 'customer.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />-->
     <link rel="stylesheet" type="text/css" href="{% static 'css/all.min.css' %}">
     <style>
         .delete-button {
@@ -38,7 +39,7 @@
     </style>
 </head>
 <body>
-    {% include "common_ref.html" with set_home="Home" %}
+    <!--{% include "common_ref.html" with set_home="Home" %}-->
 
     <div class="container">
         <h2>Customer Master</h2>
@@ -184,3 +185,4 @@
     </script>
 </body>
 </html>
+{% endblock %}

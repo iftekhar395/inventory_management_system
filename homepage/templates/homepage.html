@@ -5,130 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Management</title>
+    {% load static %}
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <style>
-        /* Sidebar Styles */
-        #sidebar {
-            width: 200px;
-            background-color: #343a40;
-            height: 100vh;
-            transition: width 0.3s ease;
-            position: fixed;
-            left: 0;
-            top: 0;
-            overflow: hidden;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
-        }
-
-        #sidebar.collapsed {
-            width: 70px !important;
-        }
-
-        .brand-text {
-            font-size: 20px;
-            font-weight: bold;
-            white-space: nowrap;
-            transition: opacity 0.3s ease;
-            color: white;
-        }
-
-        #sidebar.collapsed .brand-text {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        #toggle-container {
-            position: absolute;
-            top: 15px;
-            left: 170px;
-            transition: left 0.3s ease;
-        }
-
-        #sidebar.collapsed #toggle-container {
-            left: 20px;
-        }
-
-        #toggle-btn {
-            background-color: transparent;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        #toggle-btn i {
-            font-size: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        #sidebar .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            color: white;
-            text-decoration: none;
-            white-space: nowrap;
-            width: 100%;
-        }
-
-        #sidebar .nav-link i {
-            width: 20px;
-            text-align: center;
-            margin-right: 10px;
-        }
-
-        #sidebar.collapsed .nav-link span {
-            display: none;
-        }
-
-        #sidebar .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        #content {
-            margin-left: 200px;
-            transition: margin-left 0.3s ease;
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-
-        #content.collapsed {
-            margin-left: 70px;
-        }
-
-        .submenu {
-            display: none;
-            padding-left: 20px;
-        }
-
-        .submenu .nav-link {
-            font-size: 14px;
-            padding: 8px 15px;
-        }
-
-        .submenu.active {
-            display: block;
-        }
-
-        #sidebar.collapsed .nav-link .menu-arrow {
-            display: none;
-        }
-
-        #sidebar.collapsed .submenu {
-            display: none !important;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'homepage.css' %}">
 </head>
 
 <body>
 
+    <!-- Top Navbar -->
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand">Navbar</a>
+    <form class="d-flex">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+    <!-- Main Layout -->
     <div class="container-fluid">
         <div class="row">
+            <!-- Sidebar -->
             <div id="sidebar">
                 <div class="brand-text">Inventory</div>
                 <div id="toggle-container">
@@ -140,18 +41,24 @@
                             <i class="fas fa-home"></i> <span>Home</span>
                         </a>
                     </li>
+
+                    <!-- Cross Application -->
                     <li>
                         <a href="#" class="nav-link toggle-submenu">
-                            <i class="fas fa-users"></i> <span>Customers</span> <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
+                            <i class="fas fa-users"></i> <span>Cross Application</span>
+                            <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
                         </a>
                         <ul class="submenu">
-                            <li><a href="#" class="nav-link">Add Customer</a></li>
-                            <li><a href="#" class="nav-link">View Customers</a></li>
+                            <li><a href="customer/" class="nav-link">Customer Master</a></li>
+                            <li><a href="#" class="nav-link">Supplier Master</a></li>
                         </ul>
                     </li>
+
+                    <!-- Reports -->
                     <li>
                         <a href="#" class="nav-link toggle-submenu">
-                            <i class="fas fa-chart-bar"></i> <span>Reports</span> <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
+                            <i class="fas fa-chart-bar"></i> <span>Reports</span>
+                            <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
                         </a>
                         <ul class="submenu">
                             <li><a href="#" class="nav-link">Sales Report</a></li>
@@ -161,9 +68,12 @@
                 </ul>
             </div>
 
+            <!-- Content Area -->
             <div id="content">
-                <h1>Inventory Management System</h1>
-                <p>Welcome to my first Django project!</p>
+                {% block child_block %}
+                    <h1>Inventory Management System</h1>
+                    <p>Welcome to my first Django project!!!</p>
+                {% endblock %}
             </div>
         </div>
     </div>
@@ -189,5 +99,4 @@
     </script>
 
 </body>
-
 </html>

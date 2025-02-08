@@ -1,0 +1,151 @@
+/* Ensure full screen height and flex layout */
+.container-fluid {
+    display: flex;
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+#sidebar {
+    width: 200px;
+    background-color: #343a40;
+    height: 100vh;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    position: relative;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+}
+
+/* Sidebar collapsed */
+#sidebar.collapsed {
+    width: 70px !important;
+}
+
+/* Sidebar branding text */
+.brand-text {
+    font-size: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
+    color: white;
+}
+
+#sidebar.collapsed .brand-text {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Sidebar toggle button */
+#toggle-container {
+    position: absolute;
+    top: 15px;
+    left: 170px;
+    transition: left 0.3s ease;
+}
+
+#sidebar.collapsed #toggle-container {
+    left: 20px;
+}
+
+#toggle-btn {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+#toggle-btn i {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+}
+
+/* Sidebar navigation */
+#sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+    white-space: nowrap;
+    width: 100%;
+}
+
+#sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+#sidebar.collapsed .nav-link span {
+    display: none;
+}
+
+#sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Submenu styles */
+.submenu {
+    display: none;
+    padding-left: 20px;
+}
+
+.submenu .nav-link {
+    font-size: 14px;
+    padding: 8px 15px;
+}
+
+.submenu.active {
+    display: block;
+}
+
+#sidebar.collapsed .nav-link .menu-arrow {
+    display: none;
+}
+
+#sidebar.collapsed .submenu {
+    display: none !important;
+}
+
+/* Content Section */
+#content {
+    flex-grow: 1; /* Takes remaining width */
+    transition: margin-left 0.3s ease;
+    padding: 20px;
+    background-color: #f8f9fa;
+    margin-left: 200px; /* Adjusted for sidebar width */
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+}
+
+/* Content shifts when sidebar collapses */
+#content.collapsed {
+    margin-left: 70px;
+}
+
+/* Make sidebar responsive */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 70px;
+    }
+
+    #sidebar.collapsed {
+        width: 50px;
+    }
+
+    #content {
+        margin-left: 70px;
+    }
+}
+
+/* Remove List Marker */
+ul, ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}*/
